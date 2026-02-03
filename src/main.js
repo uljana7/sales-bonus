@@ -5,9 +5,10 @@
  * @returns {number}
  */
 function calculateSimpleRevenue(purchase, _product) {
-    
-    const discount =   1 - (purchase.discount / 100);
-    return purchase.sale_price * purchase.quantity * discount;
+    // purchase — это одна из записей в поле items из чека в data.purchase_records
+   // _product — это продукт из коллекции data.products
+    const { discount, sale_price, quantity } = purchase;
+    return sale_price * quantity * discount;
 }
 
 /**
@@ -94,7 +95,7 @@ function analyzeSalesData(data, options) {
     }
 
     //  Подготовка промежуточных данных для сбора статистики
-    const sellerStats = data.sellers.map((seller, i) => ({
+    const sellerStats = data.sellers.map(seller => ({
         id: seller.id,
         name: `${seller.first_name} ${seller.last_name}`, 
         revenue: 0,
@@ -120,9 +121,10 @@ function analyzeSalesData(data, options) {
             seller.sales_count ++;// Увеличить количество продаж 
 
             // Увеличить общую накопленную прибыль (profit) у продавца  
-            let cost = product.purchase_price * product.quantity;
-            seller.revenue += calculateRevenue();
-            seller.profit += sellerseller.revenue - cost;
+            const cost = product.purchase_price * item.quantity;
+            
+            seller.revenue += calculateRevenue(item, product);
+            seller.profit += seller.revenue - cost;
             
             // По артикулу товара увеличить его проданное количество у продавца
             if (!seller.products_sold[item.sku]) {
@@ -131,12 +133,25 @@ function analyzeSalesData(data, options) {
             seller.products_sold[item.sku] += item.quantity;
             
         });
- });
+    });
     
 
-    // @TODO: Сортировка продавцов по прибыли
+    //  Сортировка продавцов по прибыли
+    sellerStats.sort((a, b) => {
+        if (a.profit < b.profit) {
+            return 1;
+        }
+        if (a.profit > b.profit) {
+            return -1;
+        }
+        return 0;
+    }); 
 
     // @TODO: Назначение премий на основе ранжирования
+    sellerStats.forEach((seller, index) => {
+        seller.bonus = // Считаем бонус
+        seller.top_products = // Формируем топ-10 товаров
+    }); 
 
     // @TODO: Подготовка итоговой коллекции с нужными полями
 }
