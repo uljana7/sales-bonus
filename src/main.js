@@ -76,11 +76,12 @@ function analyzeSalesData(data, options) {
     //  Расчет выручки и прибыли для каждого продавца
     data.purchase_records.forEach(record => { // Чек 
         const seller = sellerIndex[record.seller_id]; // Продавец
-        // Увеличить общую сумму выручки всех продаж
+        seller.sales_count ++;// Увеличить количество продаж
+        
         // Расчёт прибыли для каждого товара
         record.items.forEach(item => {
             const product = productIndex[item.sku]; // Товар
-            seller.sales_count +=1;//+;// Увеличить количество продаж 
+             
 
             // Увеличить общую накопленную прибыль (profit) у продавца  
             const cost = product.purchase_price * item.quantity;
