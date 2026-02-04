@@ -8,7 +8,7 @@ function calculateSimpleRevenue(purchase, _product) {
     // purchase — это одна из записей в поле items из чека в data.purchase_records
    // _product — это продукт из коллекции data.products
     const { discount, sale_price, quantity } = purchase;
-    const discountNumeric = 1 - (discount / 100)
+    const discountNumeric = 1 - (discount / 100);
     return sale_price * quantity * discountNumeric;
 }
 
@@ -49,7 +49,9 @@ function analyzeSalesData(data, options) {
     ) {
         throw new Error('Некорректные входные данные');
     } 
-
+    if(data.purchase_records.length === 0){
+        throw new Error('Некорректные входные данные');
+    }
     // Проверка наличия опций
     if(!typeof options === "object") {
         throw new Error('Проблемы с входными данными');
