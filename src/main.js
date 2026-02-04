@@ -41,8 +41,11 @@ function calculateBonusByProfit(index, total, seller) {
 function analyzeSalesData(data, options) {
     //  Проверка входных данных
     if (!data || 
-        ((!Array.isArray(data.sellers)) && (!Array.isArray(data.products)) && (!Array.isArray(data.purchase_records)))
-        || ((data.sellers.length === 0) && (data.products.length === 0) && (data.purchase_records.length === 0))
+        ( !Array.isArray(data.sellers) && !Array.isArray(data.products) && !Array.isArray(data.purchase_records))
+        ||
+            Array.isArray(data.sellers) && data.sellers.length === 0 &&
+            Array.isArray(data.products) && data.products.length === 0 &&
+            Array.isArray(data.purchase_records) && data.purchase_records.length === 0 //( data.sellers.length === 0) && (data.products.length === 0) && (data.purchase_records.length === 0))
     ) {
         throw new Error('Некорректные входные данные');
     } 
@@ -77,7 +80,7 @@ function analyzeSalesData(data, options) {
         // Расчёт прибыли для каждого товара
         record.items.forEach(item => {
             const product = productIndex[item.sku]; // Товар
-            seller.sales_count ++;// Увеличить количество продаж 
+            seller.sales_count +=1;//+;// Увеличить количество продаж 
 
             // Увеличить общую накопленную прибыль (profit) у продавца  
             const cost = product.purchase_price * item.quantity;
@@ -92,6 +95,7 @@ function analyzeSalesData(data, options) {
             seller.products_sold[item.sku] += item.quantity;
             
         });
+        //seller.sales_count = Object.keys(seller.products_sold).length;// Увеличить количество продаж 
     });
     
 
@@ -113,7 +117,7 @@ function analyzeSalesData(data, options) {
     }); 
 
     //  Подготовка итоговой коллекции с нужными полями
-    return sellerStats.map(seller => ({
+    const sellerFinalStat = sellerStats.map(seller => ({
         seller_id: seller.id,// Строка, идентификатор продавца
         name: seller.name,// Строка, имя продавца
         revenue: +seller.revenue.toFixed(2),// Число с двумя знаками после точки, выручка продавца
@@ -121,5 +125,7 @@ function analyzeSalesData(data, options) {
         sales_count: seller.sales_count,// Целое число, количество продаж продавца
         top_products: seller.top_products,// Массив объектов вида: { "sku": "SKU_008","quantity": 10}, топ-10 товаров продавца
         bonus: +seller.bonus.toFixed(2)// Число с двумя знаками после точки, бонус продавца
-}));
+    }));
+    return sellerFinalStat;
+
 }
