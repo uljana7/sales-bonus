@@ -79,7 +79,7 @@ function analyzeSalesData(data, options) {
     data.purchase_records.forEach(record => { // Чек 
         const seller = sellerIndex[record.seller_id]; // Продавец
         seller.sales_count ++;// Увеличить количество продаж
-        
+        seller.revenue += record.total_amount;
         // Расчёт прибыли для каждого товара
         record.items.forEach(item => {
             const product = productIndex[item.sku]; // Товар
@@ -88,7 +88,7 @@ function analyzeSalesData(data, options) {
             // Увеличить общую накопленную прибыль (profit) у продавца  
             const cost = product.purchase_price * item.quantity;
             const revenueCalculated = calculateRevenue(item, product);
-            seller.revenue += revenueCalculated;
+            //seller.revenue += revenueCalculated;
             seller.profit += (revenueCalculated - cost);
             
             // По артикулу товара увеличить его проданное количество у продавца
